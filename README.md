@@ -14,7 +14,7 @@
 
 ![][1]  
 
-[1]:UML.jpeg
+[1]:UML.jpg
 
 **Descripción UML:**
 
