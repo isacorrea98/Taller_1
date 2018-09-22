@@ -4,35 +4,37 @@ import processing.core.PApplet;
 
 public class CorazonFlecha extends Componente {
 
-	public CorazonFlecha(PApplet app, int x, int y, int velX, int velY, int directX, int directY, int r, int g, int b,
-			int opacity, int ancho, int alto, int id) {
-		super(app, x, y, velX, velY, directX, directY, r, g, b, opacity, ancho, alto, id);
+	public CorazonFlecha(PApplet app, int x, int y, int velX, int velY, int direcX, int direcY, int ancho, int alto,
+			int r, int g, int b, int opacity, int id) {
+		super(app, x, y, velX, velY, direcX, direcY, ancho, alto, r, g, b, opacity, id);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public void pintar() {
+	protected void pintar() {
 
-		// CORAZON
 		app.smooth();
 		app.noStroke();
 		app.fill(r, g, b, opacity);
 		app.beginShape();
 		app.vertex(x, y);
-		app.bezierVertex(x, (y - 50), (x + 90), (y - 40), x, (y + 55));
+		app.bezierVertex(x, (y - 40), (x + 80), (y + 10), x, (y + 45));
 		app.vertex(x, y);
-		app.bezierVertex(x, (y - 50), (x - 90), (y - 40), x, (y + 55));
+		app.bezierVertex(x, (y - 40), (x - 80), (y + 10), x, (y + 45));
 		app.endShape();
 
 		// FLECHA
-		app.strokeWeight(3);
+		app.strokeWeight(2);
 		app.stroke(0, 0, 0);
-		app.line((x - 52), (y + 46), (x - 1), (y + 10));
-		app.line((x + 39), (y - 20), (x + 73), (y - 45));
-		app.line((x + 58), (y - 47), (x + 73), (y - 45));
-		app.line((x + 71), (y - 31), (x + 73), (y - 45));
-		app.line((x - 63), (y + 43), (x - 52), (y + 46));
-		app.line((x - 52), (y + 55), (x - 52), (y + 46));
+		app.line(x - 44, y + 44, x - 5, y + 17);
+		app.line(x + 29, y - 6, x + 54, y - 24);
+
+		app.line(x + 44, y - 26, x + 55, y - 23);
+		app.line(x + 55, y - 23, x + 55, y - 16);
+
+		app.line(x - 54, y + 44, x - 44, y + 45);
+		app.line(x - 44, y + 45, x - 45, y + 50);
+
 	}
 
 }

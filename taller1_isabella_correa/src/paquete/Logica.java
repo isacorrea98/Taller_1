@@ -1,10 +1,10 @@
 package paquete;
 
 import java.awt.Desktop;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,430 +15,370 @@ import processing.core.PApplet;
 
 public class Logica {
 
-	// BLOQUE DE CONSTANTES
 	public final static int MAYUSCULAS = 1;
 	public final static int ELIMINAR_A = 2;
-	public final static int TEXTO_REVES = 3;
-	public final static int TEXTO_ALEAOTRIO = 4;
+	public final static int TEXTO_AL_REVES = 3;
+	public final static int TEXTO_ALEATORIO = 4;
 	public final static int ELIMINAR_VOCALES = 5;
 	public final static int ELIMINAR_ESPACIOS = 6;
-	public final static int ELIMINAR_TEXTO = 7;
+	public final static int TEXTO_BLANCO = 7;
 	public final static int LAS_A_SON_O = 8;
 
-	// BLOQUE DE RELACIONES
 	private ArrayList<Componente> componentes;
-
-	// BLOQUE DE ATRIBUTOS
 	private String cadena;
-	private boolean estado;
+	private PApplet app;
 	private int opacity;
 
-	// BLOQUE CONSTRUCTOR
-	public Logica() {
+	public Logica(PApplet app) {
 
+		this.app = app;
 		cadena = "";
-		estado = false;
 		opacity = 255;
 		componentes = new ArrayList<Componente>();
-
-		String rutaArchivo = "./resources/song.txt";
-		try {
-			LeerTxt(rutaArchivo);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 
-	public void dibujar(PApplet app) {
-
-		if (estado == false) {
-			Componente anillo = new Anillo(app, 200, 200, 2, 1,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 195, 8, opacity, 100,
-					100, 1);
-
-			Componente dobleAnillo = new Anillos(app, 400, 200, 2, 1,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 153, 102, opacity, 100,
-					100, 2);
-
-			Componente carta = new Carta(app, 600, 100, 1, 2,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 255, 255, opacity, 120,
-					150, 3);
-
-			Componente copa = new Copa(app, 800, 100, 1, 2,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 204, 255, 255, opacity, 100,
-					100, 4);
-
-			Componente corazon = new Corazon(app, 200, 400, 2, 1,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 0, 255, opacity, 100,
-					100, 5);
-
-			Componente corazonFlechado = new CorazonFlecha(app, 400, 400, 1, 2,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 0, 255, opacity, 100,
-					100, 6);
-
-			Componente flecha = new Flecha(app, 600, 400, 2, 1,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 0, 255, opacity, 100,
-					100, 7);
-
-			Componente emoji = new Emoji(app, 800, 400, 1, 2,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 255, 0, opacity, 100,
-					100, 8);
-
-			componentes.add(anillo);
-			componentes.add(dobleAnillo);
-			componentes.add(carta);
-			componentes.add(copa);
-			componentes.add(corazon);
-			componentes.add(corazonFlechado);
-			componentes.add(flecha);
-			componentes.add(emoji);
-
-			estado = true;
+	private void dividirFigura() {
+		for (int i = 0; i < componentes.size(); i++) {
+			if (app.dist(componentes.get(i).getX(), componentes.get(i).getY(), app.mouseX, app.mouseY) < 80) {
+				crearNueva(componentes.get(i).getId());
+				break;
+			}
 		}
+	}
+
+	private void aumentarTamano(int accion) {
+
+		if (accion < 0) {
+
+			for (int i = 0; i < componentes.size(); i++) {
+				if (app.dist(componentes.get(i).getX(), componentes.get(i).getY(), app.mouseX, app.mouseY) < 80) {
+
+					componentes.get(i).setAlto(componentes.get(i).getAlto() + 10);
+					componentes.get(i).setAncho(componentes.get(i).getAncho() + 10);
+				}
+			}
+		}
+
+		else if (accion > 0) {
+
+			for (int i = 0; i < componentes.size(); i++) {
+				if (app.dist(componentes.get(i).getX(), componentes.get(i).getY(), app.mouseX, app.mouseY) < 80) {
+
+					componentes.get(i).setAlto(componentes.get(i).getAlto() - 10);
+					componentes.get(i).setAncho(componentes.get(i).getAncho() - 10);
+				}
+			}
+		}
+	}
+
+	public void inicializar() {
+
+		Componente anillo = new Anillo(app, 100, 200, 1, 2,
+				(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+				(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 241, 196, 15, opacity,
+				1);
+		componentes.add(anillo);
+
+		Componente anillos = new Anillos(app, 300, 200, 1, 2,
+				(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+				(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 241, 196, 15, opacity,
+				2);
+
+		componentes.add(anillos);
+
+		Componente carta = new Carta(app, 500, 100, 1, 2,
+				(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+				(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 150, 255, 255, 255, opacity,
+				3);
+
+		componentes.add(carta);
+
+		Componente copa = new Copa(app, 700, 100, 1, 2,
+				(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+				(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 203, 255, 255, opacity,
+				4);
+
+		componentes.add(copa);
+
+		Componente corazon = new Corazon(app, 900, 100, 1, 2,
+				(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+				(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 255, 0, 107, opacity,
+				5);
+
+		componentes.add(corazon);
+
+		Componente corazonf = new CorazonFlecha(app, 1000, 100, 1, 2,
+				(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+				(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 255, 0, 107, opacity,
+				6);
+
+		componentes.add(corazonf);
+
+		Componente flecha = new Flecha(app, 1100, 100, 1, 2,
+				(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+				(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 0, 0, 0, opacity, 7);
+
+		componentes.add(flecha);
+
+		Componente emoji = new Emoji(app, 200, 400, 1, 2,
+				(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+				(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 200, 200, 255, 255, 0, opacity,
+				8);
+
+		componentes.add(emoji);
+	}
+
+	private void crearNueva(int id) {
+
+		switch (id) {
+		case 1:
+
+			Componente anillo = new Anillo(app, app.mouseX, app.mouseY, 1, 2,
+					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 241, 196, 15,
+					opacity, 1);
+			componentes.add(anillo);
+			break;
+		case 2:
+			Componente anillos = new Anillos(app, app.mouseX, app.mouseY, 1, 2,
+					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 241, 196, 15,
+					opacity, 2);
+
+			componentes.add(anillos);
+			break;
+		case 3:
+			Componente carta = new Carta(app, app.mouseX, app.mouseY, 1, 2,
+					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 150, 255, 255, 255,
+					opacity, 3);
+
+			componentes.add(carta);
+			break;
+		case 4:
+			Componente copa = new Copa(app, app.mouseX, app.mouseY, 1, 2,
+					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 203, 255, 255,
+					opacity, 4);
+
+			componentes.add(copa);
+			break;
+		case 5:
+			Componente corazon = new Corazon(app, app.mouseX, app.mouseY, 1, 2,
+					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 255, 0, 107,
+					opacity, 5);
+
+			componentes.add(corazon);
+			break;
+		case 6:
+			Componente corazonf = new CorazonFlecha(app, app.mouseX, app.mouseY, 1, 2,
+					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 255, 0, 107,
+					opacity, 6);
+
+			componentes.add(corazonf);
+			break;
+		case 7:
+			Componente flecha = new Flecha(app, app.mouseX, app.mouseY, 1, 2,
+					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 100, 100, 0, 0, 0, opacity,
+					7);
+
+			componentes.add(flecha);
+			break;
+		case 8:
+			Componente emoji = new Emoji(app, app.mouseX, app.mouseY, 1, 2,
+					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
+					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 200, 200, 255, 255, 0,
+					opacity, 8);
+
+			componentes.add(emoji);
+			break;
+		}
+	}
+
+	private void arrastrarFigura() {
+		for (int i = 0; i < componentes.size(); i++) {
+			if (app.dist(componentes.get(i).getX(), componentes.get(i).getY(), app.mouseX, app.mouseY) < 80) {
+				componentes.get(i).setX((int) app.mouseX);
+				componentes.get(i).setY((int) app.mouseY);
+			}
+		}
+	}
+
+	private void cambiarColorFigura() {
+		for (int i = 0; i < componentes.size(); i++) {
+			if (app.dist(componentes.get(i).getX(), componentes.get(i).getY(), app.mouseX, app.mouseY) < 80) {
+				componentes.get(i).setR((int) app.random(255));
+				componentes.get(i).setG((int) app.random(255));
+				componentes.get(i).setB((int) app.random(255));
+			}
+		}
+	}
+
+	private void cambiarOpacidadFiguras() {
+
+		opacity = 127;
 
 		for (int i = 0; i < componentes.size(); i++) {
-
-			Componente componente = componentes.get(i);
-			componente.pintar();
-			componente.mover();
+			componentes.get(i).setOpacity(opacity);
 		}
-
 	}
 
-	// BLOQUE DE METODOS
-	public void Atravesar(PApplet app) {
+	public void Atravesar() {
 
-		mouseClicked(app);
+		dividirFigura();
 		ModificarTxt(MAYUSCULAS);
 	}
 
-	public void DobleClick(PApplet app, int i) {
-
-		mouseWheel(app, i);
+	public void DobleClick(int accion) {
+		aumentarTamano(accion);
 		ModificarTxt(ELIMINAR_A);
-
 	}
 
 	public void ClickSostenido() {
-
-		// To-Do: Hacer girar esas cosas
-		ModificarTxt(TEXTO_REVES);
+		// FALTA HACER QUE GIRE LA FIGURA
+		ModificarTxt(TEXTO_AL_REVES);
 	}
 
-	public void Arrastrar(PApplet app) {
-
-		mouseDrag(app);
-		ModificarTxt(TEXTO_ALEAOTRIO);
-
+	public void Arrastrar() {
+		arrastrarFigura();
+		ModificarTxt(TEXTO_ALEATORIO);
 	}
 
-	public void TeclaC(PApplet app) {
-
-		modificarColor(app);
+	public void TeclaC() {
+		cambiarColorFigura();
 		ModificarTxt(ELIMINAR_VOCALES);
 	}
 
-	public void TeclaEspacio(PApplet app) {
-
-		modificarOpacidad(app);
+	public void TeclaEspacio() {
+		cambiarOpacidadFiguras();
 		ModificarTxt(ELIMINAR_ESPACIOS);
 	}
 
 	public void TeclaSupr() {
 
 		componentes = new ArrayList<Componente>();
-		ModificarTxt(ELIMINAR_TEXTO);
+		ModificarTxt(TEXTO_BLANCO);
 	}
 
-	public void TeclaR(PApplet app) {
+	public void TeclaR() {
 
-		int id = (int) app.random(8);
-
-		crearNuevaFigura(app, id);
+		crearNueva((int) app.random(8));
 		ModificarTxt(LAS_A_SON_O);
 	}
 
-	public void modificarOpacidad(PApplet app) {
-
+	public void mover() {
 		for (int i = 0; i < componentes.size(); i++) {
-			componentes.get(i).setOpacity(127);
-		}
-
-	}
-
-	public void modificarColor(PApplet app) {
-
-		int r = (int) app.random(255);
-		int g = (int) app.random(255);
-		int b = (int) app.random(255);
-
-		for (int i = 0; i < componentes.size(); i++) {
-			if (app.dist(componentes.get(i).getX(), componentes.get(i).getY(), app.mouseX, app.mouseY) < 80) {
-				componentes.get(i).setR(r);
-				componentes.get(i).setG(g);
-				componentes.get(i).setB(b);
-			}
-
-		}
-	}
-
-	public void mouseDrag(PApplet app) {
-
-		if (app.mousePressed) {
-			for (int i = 0; i < componentes.size(); i++) {
-				if (app.dist(componentes.get(i).getX(), componentes.get(i).getY(), app.mouseX, app.mouseY) < 80) {
-					componentes.get(i).setX((int) app.mouseX);
-					componentes.get(i).setY((int) app.mouseY);
-				}
-			}
-		}
-	}
-
-	public void mouseClicked(PApplet app) {
-
-		if (app.mouseButton == app.RIGHT) {
-
-			int id = 0;
-
-			for (int i = 0; i < componentes.size(); i++) {
-
-				if (app.dist(componentes.get(i).getX(), componentes.get(i).getY(), app.mouseX, app.mouseY) < 80) {
-
-					id = componentes.get(i).getId();
-					break;
-				}
-
-			}
-
-			crearNuevaFigura(app, id);
-
-		}
-	}
-
-	private void crearNuevaFigura(PApplet app, int id) {
-
-		if (id == 1) {
-			Componente anillo = new Anillo(app, app.mouseX, app.mouseY, 2, 1,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 195, 8, opacity, 100,
-					100, 1);
-			componentes.add(anillo);
-
-		}
-		if (id == 2) {
-			Componente dobleAnillo = new Anillos(app, app.mouseX, app.mouseY, 2, 1,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 153, 102, opacity, 100,
-					100, 2);
-			componentes.add(dobleAnillo);
-
-		}
-		if (id == 3) {
-			Componente carta = new Carta(app, app.mouseX, app.mouseY, 1, 2,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 255, 255, opacity, 120,
-					150, 3);
-			componentes.add(carta);
-
-		}
-		if (id == 4) {
-			Componente copa = new Copa(app, app.mouseX, app.mouseY, 1, 2,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 204, 255, 255, opacity, 100,
-					100, 4);
-			componentes.add(copa);
-
-		}
-		if (id == 5) {
-			Componente corazon = new Corazon(app, app.mouseX, app.mouseY, 2, 1,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 0, 255, opacity, 100,
-					100, 5);
-			componentes.add(corazon);
-
-		}
-		if (id == 6) {
-			Componente corazonFlechado = new CorazonFlecha(app, app.mouseX, app.mouseY, 1, 2,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 0, 255, opacity, 100,
-					100, 6);
-			componentes.add(corazonFlechado);
-
-		}
-		if (id == 7) {
-			Componente flecha = new Flecha(app, app.mouseX, app.mouseY, 2, 1,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 0, 255, opacity, 100,
-					100, 7);
-			componentes.add(flecha);
-
-		}
-		if (id == 8) {
-
-			Componente emoji = new Emoji(app, app.mouseX, app.mouseY, 1, 2,
-					(int) app.random((int) app.random(-5, 5), (int) app.random(6, 11)),
-					(int) app.random((int) app.random(-11, 6), (int) app.random(12, 18)), 255, 255, 0, opacity, 100,
-					100, 8);
-			componentes.add(emoji);
-
-		}
-	}
-
-	public void mouseWheel(PApplet app, int x) {
-
-		if (x < 0) {
-			for (int i = 0; i < componentes.size(); i++) {
-
-				if (app.dist(componentes.get(i).getX(), componentes.get(i).getY(), app.mouseX, app.mouseY) < 80) {
-
-					int alto = componentes.get(i).getAlto();
-					int ancho = componentes.get(i).getAncho();
-
-					componentes.get(i).setAlto(alto + 10);
-					componentes.get(i).setAncho(ancho + 10);
-
-				}
-
-			}
-		} else {
-			for (int i = 0; i < componentes.size(); i++) {
-
-				if (app.dist(componentes.get(i).getX(), componentes.get(i).getY(), app.mouseX, app.mouseY) < 80) {
-
-					int alto = componentes.get(i).getAlto();
-					int ancho = componentes.get(i).getAncho();
-
-					componentes.get(i).setAlto(alto - 10);
-					componentes.get(i).setAncho(ancho - 10);
-
-				}
-
-			}
+			componentes.get(i).mover();
+			componentes.get(i).pintar();
 		}
 	}
 
 	public void LeerTxt(String rutaArchivo) throws IOException {
+
+		cadena = "";
 
 		FileReader fileReader = new FileReader(rutaArchivo);
 
 		BufferedReader bufferReader = new BufferedReader(fileReader);
 
 		String aux = bufferReader.readLine();
-
 		while (aux != null) {
+
 			cadena += aux;
 			aux = bufferReader.readLine();
 		}
-		System.out.println(cadena);
 		bufferReader.close();
 
+		System.out.println(cadena);
 	}
 
-	public void ModificarTxt(int tipoModificacion) {
+	public void ModificarTxt(int tipoCambio) {
 
-		switch (tipoModificacion) {
+		switch (tipoCambio) {
 		case MAYUSCULAS:
-
 			cadena = cadena.toUpperCase();
-			// System.out.println(cadena);
+			System.out.println(cadena);
 			break;
 
 		case ELIMINAR_A:
-
-			cadena = cadena.replaceAll("(?iu)a", "");
-			// System.out.println(cadena);
+			cadena = cadena.replaceAll("a", "");
+			cadena = cadena.replaceAll("A", "");
+			cadena = cadena.replaceAll("α", "");
+			cadena = cadena.replaceAll("Α", "");
+			System.out.println(cadena);
 			break;
 
-		case TEXTO_REVES:
+		case TEXTO_AL_REVES:
 
-			String invCadena = "";
-
-			for (int contador = cadena.length() - 1; contador > 0; contador--) {
-				invCadena = invCadena + cadena.charAt(contador);
-			}
-
-			cadena = invCadena;
-			// System.out.println(cadena);
+			String sCadenaInvertida = "";
+			for (int x = cadena.length() - 1; x >= 0; x--)
+				sCadenaInvertida = sCadenaInvertida + cadena.charAt(x);
+			cadena = sCadenaInvertida;
+			System.out.println(cadena);
 			break;
-		case TEXTO_ALEAOTRIO:
 
-			cadena = revolverCadena(cadena);
-			// System.out.println(cadena);
+		case TEXTO_ALEATORIO:
+
+			char[] revolver = cadena.toCharArray();
+			String palabraRevuelta = "";
+			Random rgen = new Random();
+
+			do {
+				for (int i = 0; i < revolver.length; i++) {
+					int randomPosition = rgen.nextInt(revolver.length);
+					char temp = revolver[i];
+					revolver[i] = revolver[randomPosition];
+					revolver[randomPosition] = temp;
+				}
+				for (int i = 0; i < revolver.length; i++) {
+					palabraRevuelta += revolver[i];
+				}
+			} while (palabraRevuelta.equals(cadena) == true);
+
+			cadena = palabraRevuelta;
+			System.out.println(cadena);
+
 			break;
 
 		case ELIMINAR_VOCALES:
-
 			cadena = cadena.replaceAll("(?iu)[aeiouαινσϊό]", "");
-			// System.out.println(cadena);
+			System.out.println(cadena);
 			break;
-
 		case ELIMINAR_ESPACIOS:
-
-			cadena = cadena.replaceAll("\\s", "");
-			// System.out.println(cadena);
+			cadena = cadena.replaceAll(" ", "");
+			System.out.println(cadena);
 			break;
-
-		case ELIMINAR_TEXTO:
-
-			cadena = " ";
-			// System.out.println(cadena);
+		case TEXTO_BLANCO:
+			cadena = "";
 			break;
-
 		case LAS_A_SON_O:
-
-			cadena = cadena.replaceAll("(?iu)a", "o");
-			// System.out.println(cadena);
+			cadena = cadena.replaceAll("a", "o");
+			cadena = cadena.replaceAll("A", "O");
+			cadena = cadena.replaceAll("α", "σ");
+			cadena = cadena.replaceAll("Α", "Σ");
+			System.out.println(cadena);
 			break;
-
 		}
-
-	}
-
-	private String revolverCadena(String cadena) {
-
-		char[] revolver = cadena.toCharArray();
-		String palabraRevuelta = "";
-		Random rgen = new Random();
-
-		do {
-			for (int i = 0; i < revolver.length; i++) {
-				int randomPosition = rgen.nextInt(revolver.length);
-				char temp = revolver[i];
-				revolver[i] = revolver[randomPosition];
-				revolver[randomPosition] = temp;
-			}
-			for (int i = 0; i < revolver.length; i++) {
-				palabraRevuelta += revolver[i];
-			}
-		} while (palabraRevuelta.equals(cadena) == true);
-
-		return palabraRevuelta;
-
 	}
 
 	public void GenerarTxts() throws IOException {
 
-		Long tiempo = System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 
-		FileWriter fileWriter = new FileWriter("./resources/modificacion-" + tiempo + ".txt");
-		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-		bufferedWriter.write(cadena);
-		bufferedWriter.close();
+		FileWriter flwriter = new FileWriter("./resources/modificacion-" + time + ".txt");
+		BufferedWriter bfwriter = new BufferedWriter(flwriter);
 
-		System.out.println("Archivo creado satisfactoriamente como modificacion-" + tiempo
-				+ ".txt en la carpeta resources del proyecto.");
+		bfwriter.write(cadena);
+		bfwriter.close();
 
-		File file = new File("./resources/modificacion-" + tiempo + ".txt");
-		Desktop.getDesktop().open(file);
+		System.out.println("Archivo creado satisfactoriamente como modificacion-" + time
+				+ ".txt ****GUARDADO EN LA CARPETA RESOURCES DEL PROYECTO****");
+
+		File objetofile = new File("./resources/modificacion-" + time + ".txt");
+		Desktop.getDesktop().open(objetofile);
 
 		LeerTxt("./resources/song.txt");
 	}

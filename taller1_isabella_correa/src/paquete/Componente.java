@@ -9,49 +9,79 @@ public abstract class Componente {
 	protected int y;
 	protected int velX;
 	protected int velY;
-	protected int directX;
-	protected int directY;
+	protected int direcX;
+	protected int direcY;
+	protected int ancho;
+	protected int alto;
 	protected int r;
 	protected int g;
 	protected int b;
 	protected int opacity;
-	protected int ancho;
-	protected int alto;
 	protected int id;
 
-	public Componente(PApplet app, int x, int y, int velX, int velY, int directX, int directY, int r, int g, int b,
-			int opacity, int ancho, int alto, int id) {
+
+
+	public Componente(PApplet app, int x, int y, int velX, int velY, int direcX, int direcY, int ancho, int alto, int r,
+			int g, int b, int opacity, int id) {
 		super();
 		this.app = app;
 		this.x = x;
 		this.y = y;
 		this.velX = velX;
 		this.velY = velY;
-		this.directX = directX;
-		this.directY = directY;
+		this.direcX = direcX;
+		this.direcY = direcY;
+		this.ancho = ancho;
+		this.alto = alto;
 		this.r = r;
 		this.g = g;
 		this.b = b;
 		this.opacity = opacity;
-		this.ancho = ancho;
-		this.alto = alto;
 		this.id = id;
 	}
 
-	public int getOpacity() {
-		return opacity;
-	}
+	protected abstract void pintar();
 
-	public void setOpacity(int opacity) {
-		this.opacity = opacity;
+	// Metodo que se encarga de usar los
+	// atributos inyeectados en el constructor
+	// para poder dar movimiento al elemento
+	// dentro de la pantalla
+	public void mover() {
+		x = x + (velX * direcX);
+		y = y + (velY * direcY);
+		if (x > app.width - 20) {
+			direcX = -direcX;
+		}
+		if (x < 20) {
+			direcX = -direcX;
+		}
+		if (y > app.height - 20) {
+			direcY = -direcY;
+		}
+		if (y < 20) {
+			direcY = -direcY;
+		}
 	}
 
 	public PApplet getApp() {
 		return app;
 	}
 
+	public void setApp(PApplet app) {
+		this.app = app;
+	}
+
 	public int getAncho() {
 		return ancho;
+	}
+
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public void setAncho(int ancho) {
@@ -64,10 +94,6 @@ public abstract class Componente {
 
 	public void setAlto(int alto) {
 		this.alto = alto;
-	}
-
-	public void setApp(PApplet app) {
-		this.app = app;
 	}
 
 	public int getX() {
@@ -102,20 +128,20 @@ public abstract class Componente {
 		this.velY = velY;
 	}
 
-	public int getDirectX() {
-		return directX;
+	public int getDirecX() {
+		return direcX;
 	}
 
-	public void setDirectX(int directX) {
-		this.directX = directX;
+	public void setDirecX(int direcX) {
+		this.direcX = direcX;
 	}
 
-	public int getDirectY() {
-		return directY;
+	public int getDirecY() {
+		return direcY;
 	}
 
-	public void setDirectY(int directY) {
-		this.directY = directY;
+	public void setDirecY(int direcY) {
+		this.direcY = direcY;
 	}
 
 	public int getR() {
@@ -142,35 +168,12 @@ public abstract class Componente {
 		this.b = b;
 	}
 
-	public int getId() {
-		return id;
+	public int getOpacity() {
+		return opacity;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public abstract void pintar();
-
-	// Metodo que se encarga de usar los
-	// atributos inyeectados en el constructor
-	// para poder dar movimiento al elemento
-	// dentro de la pantalla
-	public void mover() {
-		x = x + (velX * directX);
-		y = y + (velY * directY);
-		if (x > app.width - 20) {
-			directX = -directX;
-		}
-		if (x < 20) {
-			directX = -directX;
-		}
-		if (y > app.height - 20) {
-			directY = -directY;
-		}
-		if (y < 20) {
-			directY = -directY;
-		}
+	public void setOpacity(int opacity) {
+		this.opacity = opacity;
 	}
 
 }

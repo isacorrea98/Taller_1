@@ -1,139 +1,111 @@
 package paquete;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import processing.core.PApplet;
-import processing.core.PImage;
+import processing.event.KeyEvent;
+import processing.event.MouseEvent;
 
 public class Main extends PApplet {
 
-	private static Logica logica;
+	private Logica logica;
 
 	public static void main(String[] args) {
 		PApplet.main("paquete.Main");
-		logica = new Logica();
 	}
 
-	public void settings() {
+	private class SecondScreen extends PApplet {
 
+		@Override
+		public void setup() {
+			smooth();
+			background(loadImage("./resources/background2.png"));
+		}
+
+		@Override
+		public void settings() {
+			size(1200, 700);
+		}
+	}
+
+	@Override
+	public void setup() {
+
+		logica = new Logica(this);
+
+		String rutaArchivo = "./resources/song.txt";
+
+		try {
+			logica.LeerTxt(rutaArchivo);
+			logica.inicializar();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void settings() {
 		size(1200, 700);
 	}
 
-	public void setup() {
-
-		fill(120, 50, 240);
-	}
-
+	@Override
 	public void draw() {
-
 		smooth();
-
-		PImage pImage = loadImage("./resources/background.png");
-		background(pImage);
-
-		PImage instrucciones = loadImage("./resources/instrucciones.png");
-		PImage guardar = loadImage("./resources/guardar.png");
-
-		image(instrucciones, 0, 0);
-		image(guardar, 180, 0);
-
-		logica.dibujar(this);
-
+		background(loadImage("./resources/background.png"));
+		image(loadImage("./resources/instrucciones.png"), 0, 0);
+		image(loadImage("./resources/guardar.png"), 170, 0);
+		logica.mover();
 	}
 
-	public void mousePressed() {
+	@Override
+	public void mouseClicked() {
 
-
-		if (mouseX >= 5 && mouseX <= 156 && mouseY >= 7 && mouseY <= 52) {
-			// instrucciones
-			SecondApplet secondApplet = new SecondApplet();
-
-			String[] args = { "SecondSketch" };
-			PApplet.runSketch(args, secondApplet);
+		if (mouseX >= 0 && mouseX <= 158 && mouseY >= 0 && mouseY <= 53) {
+			SecondScreen secondScreen = new SecondScreen();
+			String[] args = { "TwoFrameTest" };
+			PApplet.runSketch(args, secondScreen);
 		}
 
-		if (mouseX >= 188 && mouseX <= 339 && mouseY >= 7 && mouseY <= 52) {
-			// guardar
+		else if (mouseX >= 170 && mouseX <= 330 && mouseY >= 0 && mouseY <= 53) {
 			try {
 				logica.GenerarTxts();
 			} catch (IOException e) {
-
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+
+		else if (mouseButton == RIGHT) {
+			logica.Atravesar();
+		} else if (mouseButton == LEFT) {
+			logica.ClickSostenido();
+		}
+
 	}
 
+	@Override
 	public void mouseDragged() {
-
-		logica.Arrastrar(this);
-	}
-
-	public void mouseClicked() {
-
-		if (mouseButton == RIGHT) {
-			logica.Atravesar(this);
-		}
-
+		logica.Arrastrar();
 	}
 
 	@Override
-	public void mouseWheel(processing.event.MouseEvent event) {
-		super.mouseWheel(event);
-
-		float e = event.getClickCount();
-
-		if (e < 0) {
-			logica.DobleClick(this, -1);
-		} else {
-			logica.DobleClick(this, 1);
-		}
-	}
-
-	@Override
-	public void keyPressed(processing.event.KeyEvent event) {
-		super.keyPressed(event);
-
-		if (event.getKey() == 'C' || event.getKey() == 'c') {
-			logica.TeclaC(this);
+	public void keyPressed(KeyEvent event) {
+		if (event.getKeyCode() == 67) {
+			logica.TeclaC();
 		}
 
-		else if (event.getKey() == ' ') {
-			logica.TeclaEspacio(this);
-		}
-
-		else if (event.getKeyCode() == 127) {
+		else if (event.getKeyCode() == 32) {
+			logica.TeclaEspacio();
+		} else if (event.getKeyCode() == 127) {
 			logica.TeclaSupr();
-		}
-
-		if (event.getKey() == 'R' || event.getKey() == 'r') {
-			logica.TeclaR(this);
+		} else if (event.getKeyCode() == 82) {
+			logica.TeclaR();
 		}
 	}
 
-	private class SecondApplet extends PApplet {
-
-		public SecondApplet() {
-
-		}
-
-		public void settings() {
-
-			size(1200, 700);
-		}
-
-		public void setup() {
-
-			fill(120, 50, 240);
-		}
-
-		public void draw() {
-
-			smooth();
-
-			PImage pImage = loadImage("./resources/background2.png");
-			background(pImage);
-		}
+	@Override
+	public void mouseWheel(MouseEvent event) {
+		logica.DobleClick(event.getCount());
 	}
+
 }
